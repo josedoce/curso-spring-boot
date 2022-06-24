@@ -3,24 +3,26 @@ package github.josedoce.cursosb.resources;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import github.josedoce.cursosb.domain.Categoria;
+import github.josedoce.cursosb.services.CategoriaService;
 
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaResource {
 	
-	@GetMapping("/")
-	public List<Categoria> listar() {
-		var cat1 = new Categoria(1, "Informática");
-		var cat2 = new Categoria(2, "Escritório");
+	@Autowired
+	private CategoriaService categoriaService;
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> listar(@PathVariable Integer id) {
 		
-		List<Categoria> listaCategorias = new ArrayList<>();
-		listaCategorias.add(cat1);
-		listaCategorias.add(cat2);
-		return listaCategorias;
+		return ResponseEntity.ok().body(categoriaService.buscar(id));
 	}
 }
