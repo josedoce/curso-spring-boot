@@ -22,7 +22,6 @@ public class CategoriaResource {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> listar(@PathVariable Integer id) {
-		
 		return ResponseEntity.ok().body(categoriaService.buscar(id));
 	}
 }

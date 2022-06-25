@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import github.josedoce.cursosb.domain.Categoria;
 import github.josedoce.cursosb.repositories.CategoriaRepository;
+import github.josedoce.cursosb.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class CategoriaService {
@@ -14,7 +15,7 @@ public class CategoriaService {
 	public Categoria buscar(Integer id) {
 		return categoriaRepo.
 				findById(id)
-				.orElse(null);
+				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Categoria.class.getName()));
 		
 	}
 }
