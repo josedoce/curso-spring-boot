@@ -19,6 +19,14 @@ public class ResourceExceptionHandler {
 		err.setMsg(e.getMessage());
 		err.setTimestamp(System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
-		
+	}
+	
+	@ExceptionHandler(DataIntegrityException.class)
+	public ResponseEntity<StandardError> dataIntegrity(DataIntegrityException e, HttpServletRequest request){
+		var err = new StandardError(); 
+		err.setStatus(HttpStatus.BAD_REQUEST.value());
+		err.setMsg(e.getMessage());
+		err.setTimestamp(System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 }
