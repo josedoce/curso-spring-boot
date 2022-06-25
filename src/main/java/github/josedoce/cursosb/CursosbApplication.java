@@ -13,6 +13,7 @@ import github.josedoce.cursosb.domain.Cidade;
 import github.josedoce.cursosb.domain.Cliente;
 import github.josedoce.cursosb.domain.Endereco;
 import github.josedoce.cursosb.domain.Estado;
+import github.josedoce.cursosb.domain.ItemPedido;
 import github.josedoce.cursosb.domain.PagamentoComBoleto;
 import github.josedoce.cursosb.domain.PagamentoComCartao;
 import github.josedoce.cursosb.domain.Pedido;
@@ -24,6 +25,7 @@ import github.josedoce.cursosb.repositories.CidadeRepository;
 import github.josedoce.cursosb.repositories.ClienteRepository;
 import github.josedoce.cursosb.repositories.EnderecoRepository;
 import github.josedoce.cursosb.repositories.EstadoRepository;
+import github.josedoce.cursosb.repositories.ItemPedidoRepository;
 import github.josedoce.cursosb.repositories.PagamentoRepository;
 import github.josedoce.cursosb.repositories.PedidoRepository;
 import github.josedoce.cursosb.repositories.ProdutoRepository;
@@ -33,27 +35,22 @@ public class CursosbApplication implements CommandLineRunner{
 	
 	@Autowired
 	private CategoriaRepository categoriaRepository;
-	
 	@Autowired
 	private ProdutoRepository produtoRepository;
-	
 	@Autowired
 	private CidadeRepository cidadeRepository;
-	
 	@Autowired 
 	private EstadoRepository estadoRepository;
-	
 	@Autowired
 	private ClienteRepository clienteRepository;
-	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
-	
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
-	
 	@Autowired
 	private PedidoRepository pedidoRepository;
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursosbApplication.class, args);
@@ -129,6 +126,21 @@ public class CursosbApplication implements CommandLineRunner{
 		
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(cartao, boleto));
+	
+		var ip1 = new ItemPedido(ped1, prod1, 0.00, 1, 2000.0);
+		var ip2 = new ItemPedido(ped1, prod3, 0.00, 2, 80.0);
+		var ip3 = new ItemPedido(ped2, prod2, 100.00, 1, 800.0);
+		
+		//RELACIONANDO PEDIDO A ITEM PEDIDO
+		ped1.getItens().addAll(Arrays.asList(ip1, ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+		
+		//RELACIONANDO PRODUTO A PEDIDO
+		prod1.getItens().addAll(Arrays.asList(ip1));
+		prod2.getItens().addAll(Arrays.asList(ip3));
+		prod3.getItens().addAll(Arrays.asList(ip2));
+		
+		itemPedidoRepository.saveAll(Arrays.asList(ip1, ip2, ip3));
 	}
 	
 	
