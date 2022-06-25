@@ -1,6 +1,5 @@
 package github.josedoce.cursosb.resources;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,17 +7,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import github.josedoce.cursosb.services.CategoriaService;
+import github.josedoce.cursosb.services.ClienteService;
 
 @RestController
-@RequestMapping("/categorias")
-public class CategoriaResource {
+@RequestMapping("/clientes")
+public class ClienteResource {
 	
 	@Autowired
-	private CategoriaService categoriaService;
+	private ClienteService clienteService;
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> exibir(@PathVariable Integer id) {
-		return ResponseEntity.ok().body(categoriaService.buscar(id));
+	public ResponseEntity<?> exibir(@PathVariable Integer id){
+		return ResponseEntity.ok().body(clienteService.buscar(id));
 	}
+	
 }
