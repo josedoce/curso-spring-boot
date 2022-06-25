@@ -1,5 +1,6 @@
 package github.josedoce.cursosb;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,19 @@ import github.josedoce.cursosb.domain.Cidade;
 import github.josedoce.cursosb.domain.Cliente;
 import github.josedoce.cursosb.domain.Endereco;
 import github.josedoce.cursosb.domain.Estado;
+import github.josedoce.cursosb.domain.PagamentoComBoleto;
+import github.josedoce.cursosb.domain.PagamentoComCartao;
+import github.josedoce.cursosb.domain.Pedido;
 import github.josedoce.cursosb.domain.Produto;
+import github.josedoce.cursosb.domain.enums.EstadoPagamento;
 import github.josedoce.cursosb.domain.enums.TipoCliente;
 import github.josedoce.cursosb.repositories.CategoriaRepository;
 import github.josedoce.cursosb.repositories.CidadeRepository;
 import github.josedoce.cursosb.repositories.ClienteRepository;
 import github.josedoce.cursosb.repositories.EnderecoRepository;
 import github.josedoce.cursosb.repositories.EstadoRepository;
+import github.josedoce.cursosb.repositories.PagamentoRepository;
+import github.josedoce.cursosb.repositories.PedidoRepository;
 import github.josedoce.cursosb.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -41,6 +48,12 @@ public class CursosbApplication implements CommandLineRunner{
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursosbApplication.class, args);
@@ -98,6 +111,24 @@ public class CursosbApplication implements CommandLineRunner{
 		
 		clienteRepository.save(cli1);
 		enderecoRepository.saveAll(Arrays.asList(end1, end2));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		
+		//pedidos
+		var ped1 = new Pedido(null, sdf.parse("30/09/2022 13:07"), cli1, end1);
+		var ped2 = new Pedido(null, sdf.parse("30/09/2022 14:07"), cli1, end2);
+		
+		//pagamento
+		var cartao = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(cartao);
+			
+		var boleto = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("05/10/2022 14:07"), null);
+		ped2.setPagamento(boleto);
+		//RELACIONANDO CLIENTE COM PEDIDOS.
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(cartao, boleto));
 	}
 	
 	
