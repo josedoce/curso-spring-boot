@@ -2,6 +2,8 @@ package github.josedoce.cursosb.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import github.josedoce.cursosb.domain.Categoria;
 import github.josedoce.cursosb.repositories.CategoriaRepository;
@@ -21,6 +23,15 @@ public class CategoriaService {
 
 	public Categoria criar(Categoria categoria) {
 		categoria.setId(null);
+		return categoriaRepo.save(categoria);
+	}
+	
+	
+	public Categoria editar(Integer id, Categoria categoria) {
+		var hasCategoria = categoriaRepo.findById(id)
+				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Categoria.class.getName()));
+		categoria.setId(hasCategoria.getId());
+		
 		return categoriaRepo.save(categoria);
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import github.josedoce.cursosb.domain.Cliente;
 import github.josedoce.cursosb.services.ClienteService;
 
 @RestController
@@ -17,7 +18,7 @@ public class ClienteResource {
 	private ClienteService clienteService;
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> exibir(@PathVariable Integer id){
+	public ResponseEntity<Cliente> exibir(@PathVariable Integer id){
 		return ResponseEntity.ok().body(clienteService.buscar(id));
 	}
 	
