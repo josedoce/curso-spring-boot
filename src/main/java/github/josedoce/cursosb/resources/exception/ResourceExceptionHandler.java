@@ -29,4 +29,13 @@ public class ResourceExceptionHandler {
 		err.setTimestamp(System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
+	
+	@ExceptionHandler(ValueExceededException.class)
+	public ResponseEntity<StandardError> dataIntegrity(ValueExceededException e, HttpServletRequest request){
+		var err = new StandardError(); 
+		err.setStatus(HttpStatus.BAD_REQUEST.value());
+		err.setMsg(e.getMessage());
+		err.setTimestamp(System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
 }

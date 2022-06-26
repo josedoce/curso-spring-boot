@@ -1,5 +1,7 @@
 package github.josedoce.cursosb.resources;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import github.josedoce.cursosb.domain.Categoria;
+import github.josedoce.cursosb.dto.CategoriaDTO;
 import github.josedoce.cursosb.services.CategoriaService;
 
 @RestController
@@ -21,6 +25,12 @@ public class CategoriaResource {
 	
 	@Autowired
 	private CategoriaService categoriaService;
+	
+	@GetMapping
+	public ResponseEntity<List<CategoriaDTO>> listar(@RequestParam(defaultValue = "0") Integer pagina, @RequestParam(defaultValue = "90") Integer limite) {
+		return ResponseEntity.ok().body(categoriaService.listar(pagina, limite));
+	}
+	
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Categoria> exibir(@PathVariable Integer id) {
