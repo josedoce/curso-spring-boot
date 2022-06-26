@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import github.josedoce.cursosb.domain.Categoria;
@@ -50,12 +52,13 @@ public class CategoriaService {
 	}
 
 	//https://www.baeldung.com/spring-data-jpa-pagination-sorting
-	public List<CategoriaDTO> listar(Integer page, Integer limit) {
-		if(limit <= 0 || limit > 120) {
+	public Page<CategoriaDTO> listar(Integer pagina, Integer limite, String ordenarPor, String direcao) {
+		if(limite <= 0 || limite > 120) {
 			throw new ValueExceededException("Valor da query [limite] deve estar entre 1 e 120 itens por pagina.");
 		}
-		return categoriaRepo.findAll(PageRequest.of(page, limit))
-				.map(e->new CategoriaDTO(e))
-				.getContent();
+		
+		direcao = direcao.toUpperCase();
+		return categoriaRepo.findAll(PageRequest.of(pagina, limite, Direction.valueOf(direcao) , ordenarPor))
+				.map(e->new CategoriaDTO(e));
 	}
 }

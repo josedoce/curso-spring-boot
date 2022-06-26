@@ -3,6 +3,7 @@ package github.josedoce.cursosb.resources;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,10 +28,13 @@ public class CategoriaResource {
 	private CategoriaService categoriaService;
 	
 	@GetMapping
-	public ResponseEntity<List<CategoriaDTO>> listar(@RequestParam(defaultValue = "0") Integer pagina, @RequestParam(defaultValue = "90") Integer limite) {
-		return ResponseEntity.ok().body(categoriaService.listar(pagina, limite));
+	public ResponseEntity<Page<CategoriaDTO>> listar(
+			@RequestParam(defaultValue = "0") Integer pagina, 
+			@RequestParam(defaultValue = "24") Integer limite,
+			@RequestParam(defaultValue = "id") String ordenarPor,
+			@RequestParam(defaultValue = "ASC") String direcao) {
+		return ResponseEntity.ok().body(categoriaService.listar(pagina, limite, ordenarPor, direcao));
 	}
-	
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Categoria> exibir(@PathVariable Integer id) {
