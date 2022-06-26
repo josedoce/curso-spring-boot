@@ -1,6 +1,6 @@
 package github.josedoce.cursosb.resources;
 
-import java.util.List;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,8 +42,8 @@ public class CategoriaResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Void> inserir(@RequestBody Categoria categoria){
-		categoria = categoriaService.criar(categoria);
+	public ResponseEntity<Void> inserir(@Valid @RequestBody CategoriaDTO categoriaDTO){
+		var categoria = categoriaService.criar(categoriaDTO.toCategoria());
 		//uri será visivel no header
 		var uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
@@ -55,8 +55,8 @@ public class CategoriaResource {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> atualizar(@PathVariable Integer id, @RequestBody Categoria categoria){
-		categoria = categoriaService.editar(id, categoria);
+	public ResponseEntity<Void> atualizar(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO categoriaDTO){
+		categoriaService.editar(id, categoriaDTO.toCategoria());
 		return ResponseEntity.noContent().build();
 	}
 	
