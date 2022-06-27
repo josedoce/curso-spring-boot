@@ -1,15 +1,12 @@
 package github.josedoce.cursosb.services;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import github.josedoce.cursosb.domain.Categoria;
 import github.josedoce.cursosb.domain.Cliente;
@@ -39,6 +36,7 @@ public class ClienteService {
 				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Cliente.class.getName()));
 	}
 	
+	@Transactional
 	public Cliente criar(ClienteCompletoDTO clienteCompletoDTO) {
 		var cliente = fromDTO(clienteCompletoDTO);
 		cliente.setId(null);
@@ -65,7 +63,7 @@ public class ClienteService {
 		try {
 			clienteRepo.deleteById(hasCategoria.getId());			
 		}catch(DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possivél excluir um cliente com entidades relacionadas.");
+			throw new DataIntegrityException("Não é possivél excluir porque há pedidos relacionados.");
 		}
 	}
 
