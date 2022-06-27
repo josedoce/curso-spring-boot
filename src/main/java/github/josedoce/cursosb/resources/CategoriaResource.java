@@ -56,7 +56,7 @@ public class CategoriaResource {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Integer id, @Valid @RequestBody CategoriaDTO categoriaDTO){
-		categoriaService.editar(id, categoriaDTO.toCategoria());
+		categoriaService.editar(id, categoriaDTO);
 		return ResponseEntity.noContent().build();
 	}
 	

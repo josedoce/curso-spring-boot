@@ -33,12 +33,12 @@ public class CategoriaService {
 		return categoriaRepo.save(categoria);
 	}
 	
-	public Categoria editar(Integer id, Categoria categoria) {
+	public Categoria editar(Integer id, CategoriaDTO categoriaDTO) {
 		var hasCategoria = categoriaRepo.findById(id)
 				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Categoria.class.getName()));
-		categoria.setId(hasCategoria.getId());
-		
-		return categoriaRepo.save(categoria);
+		hasCategoria.setId(hasCategoria.getId());
+		hasCategoria.setNome(categoriaDTO.getNome());
+		return categoriaRepo.save(hasCategoria);
 	}
 
 	public void deletar(Integer id) {
