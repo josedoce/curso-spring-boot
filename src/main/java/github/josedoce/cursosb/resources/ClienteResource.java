@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import github.josedoce.cursosb.domain.Cliente;
+import github.josedoce.cursosb.dto.ClienteCompletoDTO;
 import github.josedoce.cursosb.dto.ClienteDTO;
 import github.josedoce.cursosb.services.ClienteService;
 
@@ -43,13 +44,12 @@ public class ClienteResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Void> inserir(@Valid @RequestBody ClienteDTO clienteDTO){
-		var categoria = clienteService.criar(clienteDTO.toCliente());
-		//uri será visivel no header
+	public ResponseEntity<Void> inserir(@Valid @RequestBody ClienteCompletoDTO clienteCompletoDTO){
+		var cliente = clienteService.criar(clienteCompletoDTO);
 		var uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
 				.path("/{id}")
-				.buildAndExpand(categoria.getId())
+				.buildAndExpand(cliente.getId())
 				.toUri();
 		
 		return ResponseEntity.created(uri).build();

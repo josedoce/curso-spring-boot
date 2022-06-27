@@ -13,9 +13,13 @@ import org.springframework.stereotype.Service;
 
 import github.josedoce.cursosb.domain.Categoria;
 import github.josedoce.cursosb.domain.Cliente;
-import github.josedoce.cursosb.dto.CategoriaDTO;
+import github.josedoce.cursosb.domain.Endereco;
+import github.josedoce.cursosb.domain.enums.TipoCliente;
+import github.josedoce.cursosb.dto.ClienteCompletoDTO;
 import github.josedoce.cursosb.dto.ClienteDTO;
+import github.josedoce.cursosb.repositories.CidadeRepository;
 import github.josedoce.cursosb.repositories.ClienteRepository;
+import github.josedoce.cursosb.repositories.EnderecoRepository;
 import github.josedoce.cursosb.resources.exception.DataIntegrityException;
 import github.josedoce.cursosb.resources.exception.ValueExceededException;
 import github.josedoce.cursosb.services.exceptions.ObjectNotFoundException;
@@ -24,6 +28,10 @@ import github.josedoce.cursosb.services.exceptions.ObjectNotFoundException;
 public class ClienteService {
 	@Autowired
 	private ClienteRepository clienteRepo;
+	@Autowired
+	private CidadeRepository cidadeRepo;
+	@Autowired
+	private EnderecoRepository enderecoRepo;
 	
 	public Cliente buscar(Integer id) {
 		return clienteRepo.
@@ -31,10 +39,12 @@ public class ClienteService {
 				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Cliente.class.getName()));
 	}
 	
-	public Cliente criar(Cliente cliente) {
+	public Cliente criar(ClienteCompletoDTO clienteCompletoDTO) {
+		var cliente = fromDTO(clienteCompletoDTO);
 		cliente.setId(null);
-		clienteRepo.save(cliente);
-		return null;
+		var clienteNovo = clienteRepo.save(cliente);
+		enderecoRepo.saveAll(cliente.getEnderecos());
+		return clienteNovo;
 	}
 	
 	public void editar(Integer id, ClienteDTO clienteDTO) {
@@ -67,5 +77,23 @@ public class ClienteService {
 		direcao = direcao.toUpperCase();
 		return clienteRepo.findAll(PageRequest.of(pagina, limite, Direction.valueOf(direcao) , ordenarPor))
 				.map(e->new ClienteDTO(e));
+	}
+	
+	private Cliente fromDTO(ClienteCompletoDTO c) {
+		
+		var cliente = new Cliente(null, c.getNome(), c.getEmail(), c.getCpfOuCnpj(), TipoCliente.toEnum(c.getTipo()));
+		var cidade = cidadeRepo.findById(c.getCidadeId())
+				.orElse(null);
+		var endereco = new Endereco(null, c.getLogradouro(), c.getNumero(), c.getComplemento(), c.getBairro(), c.getCep(), cliente, cidade);
+		cliente.getEnderecos().add(endereco);
+		cliente.getTelefones().add(c.getTelefone1());
+		if(c.getTelefone2() != null) {
+			cliente.getTelefones().add(c.getTelefone2());
+		}
+		if(c.getTelefone3() != null) {
+			cliente.getTelefones().add(c.getTelefone3());
+		}
+		return cliente;
+		
 	}
 }
