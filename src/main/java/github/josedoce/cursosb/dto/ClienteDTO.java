@@ -5,7 +5,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import github.josedoce.cursosb.domain.Cliente;
+import github.josedoce.cursosb.services.validation.ClienteUpdate;
 
+@ClienteUpdate
 public class ClienteDTO {
 	private Integer id;
 	
