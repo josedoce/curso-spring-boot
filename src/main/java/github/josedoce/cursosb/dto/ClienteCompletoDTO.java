@@ -6,8 +6,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.br.CPF;
-
 import github.josedoce.cursosb.services.validation.ClienteInsert;
 import lombok.AllArgsConstructor;
 import lombok.Data;
