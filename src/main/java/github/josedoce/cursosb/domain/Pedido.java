@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -54,12 +55,15 @@ public class Pedido implements Serializable {
 		this.pagamento = pagamento;
 	}
 	
-	public Set<ItemPedido> getItens() {
-		return itens;
+	public double getValorTotal() {
+		double soma = 0.0;
+		for(ItemPedido item : this.itens) {
+			soma+=item.getSubtotal();
+		}
+		
+		return soma;
 	}
-	public void setItens(Set<ItemPedido> itens) {
-		this.itens = itens;
-	}
+	
 	public Integer getId() {
 		return id;
 	}
@@ -89,6 +93,12 @@ public class Pedido implements Serializable {
 	}
 	public void setEnderecoDeEntrega(Endereco enderecoDeEntrega) {
 		this.enderecoDeEntrega = enderecoDeEntrega;
+	}
+	public Set<ItemPedido> getItens() {
+		return itens;
+	}
+	public void setItens(Set<ItemPedido> itens) {
+		this.itens = itens;
 	}
 	@Override
 	public int hashCode() {
