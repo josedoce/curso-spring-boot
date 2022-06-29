@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import github.josedoce.cursosb.domain.Categoria;
 import github.josedoce.cursosb.dto.CategoriaDTO;
@@ -25,7 +26,8 @@ public class CategoriaService {
 				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Categoria.class.getName()));
 		
 	}
-
+	
+	@Transactional
 	public Categoria criar(Categoria categoria) {
 		categoria.setId(null);
 		return categoriaRepo.save(categoria);

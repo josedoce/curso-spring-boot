@@ -1,6 +1,8 @@
 package github.josedoce.cursosb.domain;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.persistence.EmbeddedId;
@@ -14,8 +16,8 @@ public class ItemPedido implements Serializable {
 	// id.
 	@JsonIgnore
 	/**
-	 * A partir de itemPedido, não serializo ne produto e nem pedido...
-	 * Nesse caso ,não precisa definir anotação no outro lado.
+	 * A partir de itemPedido, não serializo ne produto e nem pedido... Nesse caso
+	 * ,não precisa definir anotação no outro lado.
 	 * 
 	 * 
 	 **/
@@ -24,8 +26,9 @@ public class ItemPedido implements Serializable {
 	private Double desconto;
 	private Integer quantidade;
 	private Double preco;
-	
-	public ItemPedido() {}
+
+	public ItemPedido() {
+	}
 
 	public ItemPedido(Pedido pedido, Produto produto, Double desconto, Integer quantidade, Double preco) {
 		super();
@@ -39,28 +42,28 @@ public class ItemPedido implements Serializable {
 	public double getSubtotal() {
 		return (preco - desconto) * quantidade;
 	}
-	
+
 	@JsonIgnore
 	public Pedido getPedido() {
 		return id.getPedido();
 	}
-	
+
 	public void setPedido(Pedido pedido) {
 		id.setPedido(pedido);
 	}
-	
+
 	public Produto getProduto() {
 		return id.getProduto();
 	}
-	
+
 	public void setProduto(Produto produto) {
 		id.setProduto(produto);
 	}
-	
+
 	public ItemPedidoPK getId() {
 		return this.id;
 	}
-	
+
 	public void setId(ItemPedidoPK id) {
 		this.id = id;
 	}
@@ -105,5 +108,22 @@ public class ItemPedido implements Serializable {
 		ItemPedido other = (ItemPedido) obj;
 		return Objects.equals(id, other.id);
 	}
-	
+
+	@Override
+	public String toString() {
+		NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+		StringBuilder builder = new StringBuilder();
+		builder
+		.append(getProduto().getNome())
+		.append(", Qte: ")
+		.append(quantidade)
+		.append(", Preço unitário: ")
+		.append(", quantidade=")
+		.append(nf.format(preco))
+		.append(", Subtotal=")
+		.append(nf.format(getSubtotal()))
+		.append("\n");
+		return builder.toString();
+	}
+
 }

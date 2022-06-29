@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import github.josedoce.cursosb.domain.ItemPedido;
 import github.josedoce.cursosb.domain.PagamentoComBoleto;
@@ -26,15 +27,19 @@ public class PedidoService {
 	private ProdutoService produtoService;
 	@Autowired
 	private BoletoService boletoService;
+	@Autowired
+	private ClienteService clienteService;
 	
 	public Pedido buscar(Integer id) {
 		return pedidoRepository.findById(id)
 				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Pedido.class.getName()));
 	}
-
+	
+	@Transactional
 	public Pedido criar(Pedido pedido) {
 		pedido.setId(null);
 		pedido.setInstante(new Date());
+		pedido.setCliente(clienteService.buscar(pedido.getCliente().getId()));
 		pedido.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		pedido.getPagamento().setPedido(pedido);
 		
@@ -47,10 +52,12 @@ public class PedidoService {
 		
 		for(ItemPedido item : pedido.getItens()) {
 			item.setDesconto(0.0);
-			item.setPreco(produtoService.exibir(item.getProduto().getId()).getPreco());
+			item.setProduto(produtoService.exibir(item.getProduto().getId()));
+			item.setPreco(item.getProduto().getPreco());
 			item.setPedido(pedido);
 		}
 		itemPedidoRepo.saveAll(pedido.getItens());
+		System.out.println(pedido);
 		return pedido;
 	}
 }
