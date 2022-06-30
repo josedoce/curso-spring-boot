@@ -124,7 +124,7 @@ public class CursosbApplication implements CommandLineRunner{
 		cidadeRepository.saveAll(Arrays.asList(cid1, cid2, cid3));
 		
 		
-		var cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "23224392899",TipoCliente.PESSOAFISICA);
+		var cli1 = new Cliente(null, "Jose Silva", "jose.o.veneno@gmail.com", "23224392899",TipoCliente.PESSOAFISICA);
 		//RELACIONANDO CLIENTES COM TELEFONES
 		cli1.getTelefones().addAll(Arrays.asList("74839929","28399902"));
 		
@@ -168,6 +168,7 @@ public class CursosbApplication implements CommandLineRunner{
 		prod3.getItens().addAll(Arrays.asList(ip2));
 		
 		itemPedidoRepository.saveAll(Arrays.asList(ip1, ip2, ip3));
+		
 	}
 	
 	
