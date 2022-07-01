@@ -20,6 +20,7 @@ import github.josedoce.cursosb.domain.PagamentoComCartao;
 import github.josedoce.cursosb.domain.Pedido;
 import github.josedoce.cursosb.domain.Produto;
 import github.josedoce.cursosb.domain.enums.EstadoPagamento;
+import github.josedoce.cursosb.domain.enums.Perfil;
 import github.josedoce.cursosb.domain.enums.TipoCliente;
 import github.josedoce.cursosb.repositories.CategoriaRepository;
 import github.josedoce.cursosb.repositories.CidadeRepository;
@@ -128,17 +129,21 @@ public class CursosbApplication implements CommandLineRunner{
 		cidadeRepository.saveAll(Arrays.asList(cid1, cid2, cid3));
 		
 		
-		var cli1 = new Cliente(null, "Jose Silva", "jose.o.veneno@gmail.com", "23224392899",TipoCliente.PESSOAFISICA, pe.encode("40028922"));
+		var cli1 = new Cliente(null, "Jose Silva", "jose.o.veneno@gmail.com", "53216965430",TipoCliente.PESSOAFISICA, pe.encode("40028922"));
+		var cli2 = new Cliente(null, "Ana Silva", "josesamya@gmail.com", "12782855042",TipoCliente.PESSOAFISICA, pe.encode("40028922"));
+		cli2.addPerfil(Perfil.ADMIN);
 		//RELACIONANDO CLIENTES COM TELEFONES
 		cli1.getTelefones().addAll(Arrays.asList("74839929","28399902"));
+		cli2.getTelefones().addAll(Arrays.asList("74839939","28499902"));
 		
 		var end1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "39483204", cli1, cid1);
 		var end2 = new Endereco(null, "Avenida Matos", "3105", "Sala 800", "Centro", "29382299", cli1, cid2);
+		var end3 = new Endereco(null, "Avenida Floriano", "2106", null, "Centro", "21383929", cli2, cid2);
 		//RELACIONANDO CLIENTES COM ENDEREÇOS
 		cli1.getEnderecos().addAll(Arrays.asList(end1, end2));
-		
-		clienteRepository.save(cli1);
-		enderecoRepository.saveAll(Arrays.asList(end1, end2));
+		cli2.getEnderecos().addAll(Arrays.asList(end3));
+		clienteRepository.saveAll(Arrays.asList(cli1, cli2));
+		enderecoRepository.saveAll(Arrays.asList(end1, end2, end3));
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
