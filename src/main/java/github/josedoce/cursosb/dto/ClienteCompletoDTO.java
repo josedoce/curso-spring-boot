@@ -30,6 +30,9 @@ public class ClienteCompletoDTO implements Serializable {
 	private String cpfOuCnpj;
 	
 	private Integer tipo;
+	@Size(min=5, max=120, message="O tamanho deve ser entre 8 e 32 caracteres.")
+	@NotEmpty(message="Preenchimento obrigatório")
+	private String senha;
 	
 	@NotEmpty(message="Preenchimento obrigatório")
 	private String logradouro;

@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,8 @@ public class ClienteService {
 	private CidadeRepository cidadeRepo;
 	@Autowired
 	private EnderecoRepository enderecoRepo;
+	@Autowired
+	private BCryptPasswordEncoder pe;
 	
 	public Cliente buscar(Integer id) {
 		return clienteRepo.
@@ -76,10 +79,12 @@ public class ClienteService {
 		return clienteRepo.findAll(PageRequest.of(pagina, limite, Direction.valueOf(direcao) , ordenarPor))
 				.map(e->new ClienteDTO(e));
 	}
-	
-	private Cliente fromDTO(ClienteCompletoDTO c) {
+	public Cliente fromDTO(ClienteDTO c) {
+		return new Cliente(c.getId(), c.getNome(), c.getEmail(), null, null, null);
+	}
+	public Cliente fromDTO(ClienteCompletoDTO c) {
 		
-		var cliente = new Cliente(null, c.getNome(), c.getEmail(), c.getCpfOuCnpj(), TipoCliente.toEnum(c.getTipo()));
+		var cliente = new Cliente(null, c.getNome(), c.getEmail(), c.getCpfOuCnpj(), TipoCliente.toEnum(c.getTipo()), pe.encode(c.getSenha()));
 		var cidade = cidadeRepo.findById(c.getCidadeId())
 				.orElse(null);
 		var endereco = new Endereco(null, c.getLogradouro(), c.getNumero(), c.getComplemento(), c.getBairro(), c.getCep(), cliente, cidade);

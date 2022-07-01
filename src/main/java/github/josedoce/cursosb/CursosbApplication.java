@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import github.josedoce.cursosb.domain.Categoria;
 import github.josedoce.cursosb.domain.Cidade;
@@ -51,6 +52,9 @@ public class CursosbApplication implements CommandLineRunner{
 	private PedidoRepository pedidoRepository;
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder pe;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursosbApplication.class, args);
@@ -124,7 +128,7 @@ public class CursosbApplication implements CommandLineRunner{
 		cidadeRepository.saveAll(Arrays.asList(cid1, cid2, cid3));
 		
 		
-		var cli1 = new Cliente(null, "Jose Silva", "jose.o.veneno@gmail.com", "23224392899",TipoCliente.PESSOAFISICA);
+		var cli1 = new Cliente(null, "Jose Silva", "jose.o.veneno@gmail.com", "23224392899",TipoCliente.PESSOAFISICA, pe.encode("40028922"));
 		//RELACIONANDO CLIENTES COM TELEFONES
 		cli1.getTelefones().addAll(Arrays.asList("74839929","28399902"));
 		

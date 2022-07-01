@@ -44,13 +44,4 @@ public class ClienteDTO {
 		this.email = email;
 	}
 
-	public Cliente toCliente() {
-		var c = new Cliente();
-		c.setId(this.id);
-		c.setNome(this.nome);
-		c.setEmail(this.email);
-		c.setCpfOuCnpj(null);
-		c.setTipo(null);
-		return c;
-	}
 }
