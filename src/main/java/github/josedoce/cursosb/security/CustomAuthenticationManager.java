@@ -34,7 +34,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 		final UserDetails userDetail = userDetailsServiceImpl.loadUserByUsername(authentication.getName()); 
 		var db_senha = userDetail.getPassword();
 		var json_senha = authentication.getCredentials().toString();
-		
+
 		if(!passwordEncoder().matches(json_senha, db_senha)) {
 			throw new BadCredentialsException("Senha errada, pai...");
 		}
