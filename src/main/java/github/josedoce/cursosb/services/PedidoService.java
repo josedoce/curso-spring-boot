@@ -3,6 +3,9 @@ package github.josedoce.cursosb.services;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,8 @@ import github.josedoce.cursosb.domain.enums.EstadoPagamento;
 import github.josedoce.cursosb.repositories.ItemPedidoRepository;
 import github.josedoce.cursosb.repositories.PagamentoRepository;
 import github.josedoce.cursosb.repositories.PedidoRepository;
+import github.josedoce.cursosb.security.UserSpringSecurity;
+import github.josedoce.cursosb.services.exceptions.AuthorizationException;
 import github.josedoce.cursosb.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -61,5 +66,16 @@ public class PedidoService {
 		itemPedidoRepo.saveAll(pedido.getItens());
 		emailService.enviarEmailHtmlDeConfirmacaoDePedido(pedido);
 		return pedido;
+	}
+	
+	public Page<Pedido> listar(Integer pagina, Integer limite, String ordenarPor, String direcao) {
+		UserSpringSecurity user = UserService.authenticated();
+		if(user == null) {
+			throw new AuthorizationException("Acesso proibido");
+		}
+		var cliente = clienteService.buscar(user.getId());
+		
+		direcao = direcao.toUpperCase();
+		return pedidoRepository.findByCliente(cliente, PageRequest.of(pagina, limite, Direction.valueOf(direcao) , ordenarPor));
 	}
 }
