@@ -2,15 +2,19 @@ package github.josedoce.cursosb.config;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,19 +25,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import github.josedoce.cursosb.security.CustomAuthenticationManager;
 import github.josedoce.cursosb.security.JWTAuthenticationFilter;
 import github.josedoce.cursosb.security.JWTUtil;
 import github.josedoce.cursosb.security.JwtAuthorizationFilter;
 import github.josedoce.cursosb.security.handlers.CustomAccessDeniedHandler;
-import github.josedoce.cursosb.security.handlers.CustomAuthenticationFailure;
-import github.josedoce.cursosb.security.handlers.CustomSuccessHandler;
 import github.josedoce.cursosb.services.UserDetailsServiceImpl;
 
 
@@ -59,6 +61,7 @@ public class SecurityConfig {
 	};
 	
 	private static final String[] PUBLIC_MATCHERS_POST = {
+			"/login",
 			"/clientes/**",
 	};
 	
@@ -69,6 +72,7 @@ public class SecurityConfig {
 			//libera o acesso ao h2
 			http.headers().frameOptions().disable();
 		}
+		
 		http.cors().and().csrf().disable();
 		http.authorizeRequests()
 		.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
@@ -76,10 +80,10 @@ public class SecurityConfig {
 		.antMatchers(PUBLIC_MATCHERS).permitAll()
 		
 		.anyRequest().authenticated();
-//		http.exceptionHandling()
-//		.accessDeniedHandler(accessDeniedHandler())
-//		.authenticationEntryPoint(new EP());
-//		
+		http.exceptionHandling()
+		.accessDeniedHandler(accessDeniedHandler())
+		.authenticationEntryPoint(new EP());	
+	
 		http.addFilter(new JWTAuthenticationFilter(this.authenticationManager(), jwtUtil));
 		http.addFilter(new JwtAuthorizationFilter(this.authenticationManager(), jwtUtil, userDetailsServiceImpl));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -92,17 +96,6 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	AuthenticationSuccessHandler authenticationSuccessHandler() {
-		return new CustomSuccessHandler();
-	}
-	
-	@Bean
-	AuthenticationFailureHandler authenticationFailureHandler() {
-		return new CustomAuthenticationFailure();
-	}
-	
-	
-	@Bean
 	AccessDeniedHandler accessDeniedHandler() {
 		return new CustomAccessDeniedHandler();
 	}
@@ -111,7 +104,6 @@ public class SecurityConfig {
 	BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
 	
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
@@ -125,13 +117,16 @@ public class SecurityConfig {
 		@Override
 		public void commence(HttpServletRequest request, HttpServletResponse response,
 				AuthenticationException authException) throws IOException, ServletException {
-			
-
-	        response.setContentType("application/json");
-	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	        response.getOutputStream()
-	        .println("{ \"error\": \"" + authException.toString() + "\" }");
+			Map<String, String> payload = new HashMap<>();
+			payload.put("erro", "É necessário autorização.");
+			ObjectMapper obj = new ObjectMapper();
+			response.setContentType("application/json;charset=UTF-8;");
+			response.setStatus(HttpStatus.FORBIDDEN.value());
+			response
+			.getWriter()
+			.append(obj.writeValueAsString(payload));
 		}
 		
 	}
+	
 }

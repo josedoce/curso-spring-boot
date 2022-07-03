@@ -38,6 +38,7 @@ public class JWTUtil {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	private Claims getClaims(String token) {
 		try {
 			return Jwts.parser().setSigningKey(secret.getBytes())

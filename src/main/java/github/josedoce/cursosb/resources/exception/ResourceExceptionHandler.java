@@ -4,10 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import github.josedoce.cursosb.services.exceptions.AuthorizationException;
 import github.josedoce.cursosb.services.exceptions.ObjectNotFoundException;
 
 @ControllerAdvice
@@ -55,5 +57,21 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<StandardError> badCredentials(BadCredentialsException e, HttpServletRequest request){
+		var err = new StandardError(); 
+		err.setStatus(HttpStatus.BAD_REQUEST.value());
+		err.setMsg(e.getMessage());
+		err.setTimestamp(System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
 	
+	@ExceptionHandler(AuthorizationException.class)
+	public ResponseEntity<StandardError> authorization(AuthorizationException e, HttpServletRequest request){
+		var err = new StandardError(); 
+		err.setStatus(HttpStatus.FORBIDDEN.value());
+		err.setMsg(e.getMessage());
+		err.setTimestamp(System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
 }

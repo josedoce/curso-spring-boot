@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import github.josedoce.cursosb.domain.Categoria;
 import github.josedoce.cursosb.domain.Cliente;
 import github.josedoce.cursosb.domain.Endereco;
+import github.josedoce.cursosb.domain.enums.Perfil;
 import github.josedoce.cursosb.domain.enums.TipoCliente;
 import github.josedoce.cursosb.dto.ClienteCompletoDTO;
 import github.josedoce.cursosb.dto.ClienteDTO;
@@ -20,6 +21,8 @@ import github.josedoce.cursosb.repositories.ClienteRepository;
 import github.josedoce.cursosb.repositories.EnderecoRepository;
 import github.josedoce.cursosb.resources.exception.DataIntegrityException;
 import github.josedoce.cursosb.resources.exception.ValueExceededException;
+import github.josedoce.cursosb.security.UserSpringSecurity;
+import github.josedoce.cursosb.services.exceptions.AuthorizationException;
 import github.josedoce.cursosb.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -34,6 +37,11 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe;
 	
 	public Cliente buscar(Integer id) {
+		
+		UserSpringSecurity user = UserService.authenticated();
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso proibido");
+		}
 		return clienteRepo.
 				findById(id)
 				.orElseThrow(()->new ObjectNotFoundException("Objeto não encontrado! Id: "+id+", Tipo: "+Cliente.class.getName()));
