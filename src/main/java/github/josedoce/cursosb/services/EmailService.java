@@ -4,6 +4,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.mail.SimpleMailMessage;
 
+import github.josedoce.cursosb.domain.Cliente;
 import github.josedoce.cursosb.domain.Pedido;
 
 public interface EmailService {
@@ -12,4 +13,5 @@ public interface EmailService {
 	
 	void enviarEmailHtmlDeConfirmacaoDePedido(Pedido obj);
 	void sendHtmlEmail(MimeMessage msg);
+	void sendNovaSenhaPorEmail(Cliente cliente, String novaSenha);
 }
